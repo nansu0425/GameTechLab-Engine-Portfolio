@@ -29,10 +29,8 @@
 | **개발 환경** | Visual Studio 2022 |
 | **협업** | Git, Slack |
 
-## Deep Dives
+## Engineering Challenges
 
-본인이 담당했던 작업 중 케이스 스터디는 별도 문서로 정리합니다 (작성 예정).
+제가 담당한 작업 중 기술적으로 도전적이었던 문제의 해결 과정을 정리합니다.
 
-- [가속 구조와 레이 피킹](docs/featured-bvh.md) — `W05`
-- [스켈레탈 애니메이션](docs/featured-skinning.md) — `W10–W11`
-- [조명과 그림자](docs/featured-shading.md) — `W07–W08`
+- **[Picking 최적화](docs/picking-optimization.md)** *(작성 중)*
