@@ -20,12 +20,13 @@
 | 영역 | 기술 |
 |---|---|
 | **언어** | C++17+ |
-| **그래픽스** | DirectX 11, HLSL |
+| **그래픽스** | DirectX 11, HLSL, RenderDoc |
 | **에디터 UI** | Dear ImGui |
 | **물리** | PhysX 4.1 |
 | **메시·애니메이션 임포트** | FBX SDK |
 | **스크립팅** | Sol2 (Lua) |
 | **플랫폼** | Windows |
+| **개발 환경** | Visual Studio 2022 |
 | **협업** | Git, Slack |
 
 ## Deep Dives
