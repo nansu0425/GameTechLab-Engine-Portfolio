@@ -6,7 +6,7 @@
 
 | 기간 | 리포지토리 | 커밋 |
 |------|-----------|-----|
-| 2025-09-02 ~ 2025-09-04 | [pinball-game](https://github.com/TraceofLight/pinball-game) | 31건 |
+| 2025-09-02 ~ 2025-09-04 | [GameTechLab-WEEK01](https://github.com/nansu0425/GameTechLab-WEEK01) | 31건 |
 
 **담당 영역**
 
@@ -24,7 +24,7 @@
 
 | 기간 | 리포지토리 | 커밋 |
 |------|-----------|-----|
-| 2025-09-05 ~ 2025-09-11 | [GTL-Week02](https://github.com/Jeongwoohyeong/GTL-Week02) | 80건 |
+| 2025-09-05 ~ 2025-09-11 | [GameTechLab-WEEK02](https://github.com/nansu0425/GameTechLab-WEEK02) | 80건 |
 
 **담당 영역**
 
@@ -43,7 +43,7 @@
 
 | 기간 | 리포지토리 | 커밋 |
 |------|-----------|-----|
-| 2025-09-11 ~ 2025-09-18 | [Krafton_TechLab_Week03](https://github.com/TeshShin/Krafton_TechLab_Week03) | 50건 (nansu0425) |
+| 2025-09-11 ~ 2025-09-18 | [GameTechLab-WEEK03](https://github.com/nansu0425/GameTechLab-WEEK03) | 50건 (nansu0425) |
 
 **담당 영역**
 
@@ -61,7 +61,7 @@
 
 | 기간 | 리포지토리 | 커밋 |
 |------|-----------|-----|
-| 2025-09-18 ~ 2025-09-25 | [KRAFTON_TechLab_Engine](https://github.com/JeongBeomLee/KRAFTON_TechLab_Engine) | 52건 (nansu0425 + NanSu) |
+| 2025-09-18 ~ 2025-09-25 | [GameTechLab-WEEK04](https://github.com/nansu0425/GameTechLab-WEEK04) | 52건 (nansu0425 + NanSu) |
 
 **담당 영역**
 
@@ -80,7 +80,7 @@
 
 | 기간 | 리포지토리 | 커밋 |
 |------|-----------|-----|
-| 2025-09-25 ~ 2025-10-02 | [GTLWeek05](https://github.com/Sunha-i/GTLWeek05), [Week5_1](https://github.com/nayechan/Week5_1) | 57건 (nansu0425 — GTLWeek05 40건, Week5_1 17건) |
+| 2025-09-25 ~ 2025-10-02 | [GameTechLab-WEEK05](https://github.com/nansu0425/GameTechLab-WEEK05), [GameTechLab-WEEK05-plus](https://github.com/nansu0425/GameTechLab-WEEK05-plus) | 57건 (nansu0425 — GTLWeek05 40건, Week5_1 17건) |
 
 **담당 영역**
 
@@ -99,7 +99,7 @@
 
 | 기간 | 리포지토리 | 커밋 |
 |------|-----------|-----|
-| 2025-10-10 ~ 2025-10-15 | [KRAFTON_JungleTechLab_Week06](https://github.com/Kim-yunsoo/KRAFTON_JungleTechLab_Week06) | 37건 (nansu0425 + NanSu) |
+| 2025-10-10 ~ 2025-10-15 | [GameTechLab-WEEK06](https://github.com/nansu0425/GameTechLab-WEEK06), [GameTechLab-WEEK06-plus](https://github.com/nansu0425/GameTechLab-WEEK06-plus) | 37건 (nansu0425 + NanSu) |
 
 **담당 영역**
 
@@ -117,7 +117,7 @@
 
 | 기간 | 리포지토리 | 커밋 |
 |------|-----------|-----|
-| 2025-10-16 ~ 2025-10-22 | [Krafton_TechLab_Week14](https://github.com/Budnarae/Krafton_TechLab_Week14) | 127건 (nansu0425 + NanSu) |
+| 2025-10-16 ~ 2025-10-22 | [GameTechLab-WEEK07](https://github.com/nansu0425/GameTechLab-WEEK07) | 127건 (nansu0425 + NanSu) |
 
 **담당 영역**
 
@@ -135,7 +135,7 @@
 
 | 기간 | 리포지토리 | 커밋 |
 |------|-----------|-----|
-| 2025-10-24 ~ 2025-10-29 | [FutureEngine](https://github.com/nansu0425/FutureEngine) | 27건 (nansu0425 + NanSu) |
+| 2025-10-24 ~ 2025-10-29 | [GameTechLab-WEEK08](https://github.com/nansu0425/GameTechLab-WEEK08) | 27건 (nansu0425 + NanSu) |
 
 **담당 영역**
 
@@ -153,7 +153,7 @@
 
 | 기간 | 리포지토리 | 커밋 |
 |------|-----------|-----|
-| 2025-10-30 ~ 2025-11-06 | [FutureEngine](https://github.com/nansu0425/FutureEngine) | 94건 비병합 (nansu0425 + NanSu) |
+| 2025-10-30 ~ 2025-11-06 | [GameTechLab-WEEK09](https://github.com/nansu0425/GameTechLab-WEEK09), [GameTechLab-WEEK09-plus](https://github.com/nansu0425/GameTechLab-WEEK09-plus) | 94건 비병합 (nansu0425 + NanSu) |
 
 **담당 영역**
 
@@ -172,7 +172,7 @@
 
 | 기간 | 리포지토리 | 커밋 |
 |------|-----------|-----|
-| 2025-11-07 ~ 2025-11-12 | [Mundi_Week10](https://github.com/fuenell/Mundi_Week10) | 54건 (nansu0425 + NanSu) |
+| 2025-11-07 ~ 2025-11-12 | [GameTechLab-WEEK10](https://github.com/nansu0425/GameTechLab-WEEK10) | 54건 (nansu0425 + NanSu) |
 
 **담당 영역**
 
@@ -191,7 +191,7 @@
 
 | 기간 | 리포지토리 | 커밋 |
 |------|-----------|-----|
-| 2025-11-13 ~ 2025-11-19 | [Krafton_TechLab_Week14](https://github.com/Budnarae/Krafton_TechLab_Week14), [Week11_4](https://github.com/nayechan/Week11_4) | 45건 비병합 (nansu0425 + NanSu) |
+| 2025-11-13 ~ 2025-11-19 | [GameTechLab-WEEK11](https://github.com/nansu0425/GameTechLab-WEEK11) | 45건 비병합 (nansu0425 + NanSu) |
 
 **담당 영역**
 
@@ -210,7 +210,7 @@
 
 | 기간 | 리포지토리 | 커밋 |
 |------|-----------|-----|
-| 2025-11-21 ~ 2025-11-26 | [KraftonGTL_week12](https://github.com/lorevoon/KraftonGTL_week12) | 45건 (nansu0425) |
+| 2025-11-21 ~ 2025-11-26 | [GameTechLab-WEEK12](https://github.com/nansu0425/GameTechLab-WEEK12) | 45건 (nansu0425) |
 
 **담당 영역**
 
@@ -229,7 +229,7 @@
 
 | 기간 | 리포지토리 | 커밋 |
 |------|-----------|-----|
-| 2025-11-28 ~ 2025-12-04 | [Krafton_TechLab_Week13](https://github.com/Sunha-i/Krafton_TechLab_Week13) | 105건 (nansu0425) |
+| 2025-11-28 ~ 2025-12-04 | [GameTechLab-WEEK13](https://github.com/nansu0425/GameTechLab-WEEK13) | 105건 (nansu0425) |
 
 **담당 영역**
 
@@ -248,7 +248,7 @@
 
 | 기간 | 리포지토리 | 커밋 |
 |------|-----------|-----|
-| 2025-12-05 ~ 2025-12-11 | [Krafton_TechLab_Week14](https://github.com/Budnarae/Krafton_TechLab_Week14) | 37건 (nansu0425) |
+| 2025-12-05 ~ 2025-12-11 | [GameTechLab-WEEK14](https://github.com/nansu0425/GameTechLab-WEEK14) | 37건 (nansu0425) |
 
 **담당 영역**
 
