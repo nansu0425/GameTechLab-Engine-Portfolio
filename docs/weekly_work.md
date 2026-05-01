@@ -26,7 +26,7 @@
 
 | 기간 | 리포지토리 | 커밋 |
 |------|-----------|-----|
-| 2025-09-05 ~ 2025-09-11 | [GameTechLab-WEEK02](https://github.com/nansu0425/GameTechLab-WEEK02) | 80건 |
+| 2025-09-05 ~ 2025-09-11 | [GameTechLab-WEEK02](https://github.com/nansu0425/GameTechLab-WEEK02) | 90건 |
 
 **담당 영역**
 
@@ -45,7 +45,7 @@
 
 | 기간 | 리포지토리 | 커밋 |
 |------|-----------|-----|
-| 2025-09-11 ~ 2025-09-18 | [GameTechLab-WEEK03](https://github.com/nansu0425/GameTechLab-WEEK03) | 50건 (nansu0425) |
+| 2025-09-11 ~ 2025-09-17 | [GameTechLab-WEEK03](https://github.com/nansu0425/GameTechLab-WEEK03) | 48건 |
 
 **담당 영역**
 
@@ -63,7 +63,7 @@
 
 | 기간 | 리포지토리 | 커밋 |
 |------|-----------|-----|
-| 2025-09-18 ~ 2025-09-25 | [GameTechLab-WEEK04](https://github.com/nansu0425/GameTechLab-WEEK04) | 52건 (nansu0425 + NanSu) |
+| 2025-09-19 ~ 2025-09-25 | [GameTechLab-WEEK04](https://github.com/nansu0425/GameTechLab-WEEK04) | 78건 |
 
 **담당 영역**
 
@@ -74,15 +74,15 @@
 | **데이터 무결성** | • UUID 무결성 보장<br>• 레거시 API 마이그레이션 |
 | **에디터** | • PropertyWindow<br>• 동적 메시 스폰<br>• Save/Load 패널 |
 
-[커밋 기록 보기](commit_history.md#week04-2025-09-18--2025-09-25)
+[커밋 기록 보기](commit_history.md#week04-2025-09-19--2025-09-25)
 
 ---
 
-## WEEK05 — 2-Level BVH 피킹 시스템과 Billboard 렌더링
+## WEEK05 — 2-Level BVH 피킹 시스템
 
 | 기간 | 리포지토리 | 커밋 |
 |------|-----------|-----|
-| 2025-09-25 ~ 2025-10-02 | [GameTechLab-WEEK05](https://github.com/nansu0425/GameTechLab-WEEK05), [GameTechLab-WEEK05-plus](https://github.com/nansu0425/GameTechLab-WEEK05-plus) | 57건 (nansu0425 — GTLWeek05 40건, Week5_1 17건) |
+| 2025-09-26 ~ 2025-09-30 | [GameTechLab-WEEK05](https://github.com/nansu0425/GameTechLab-WEEK05) | 41건 |
 
 **담당 영역**
 
@@ -91,27 +91,57 @@
 | **가속 구조** | • 2-Level BVH (Scene + Mesh)<br>• Binned SAH 분할 |
 | **레이 피킹** | • 프론트-투-백 트래버설<br>• Back-face Culling<br>• O(N)→O(log N) |
 | **성능 최적화** | • Dirty Flag Refit<br>• SoA 캐시<br>• 프로파일링 |
-| **렌더링** | • Billboard/TextRender 이원 구조 재설계 |
 
-[커밋 기록 보기](commit_history.md#week05-2025-09-26--2025-10-02)
+[커밋 기록 보기](commit_history.md#week05-2025-09-26--2025-09-30)
 
 ---
 
-## WEEK06 — 데칼 시스템, Scene Depth, Exponential Height Fog
+## WEEK05+ — Billboard / TextRender 재설계
 
 | 기간 | 리포지토리 | 커밋 |
 |------|-----------|-----|
-| 2025-10-10 ~ 2025-10-15 | [GameTechLab-WEEK06](https://github.com/nansu0425/GameTechLab-WEEK06), [GameTechLab-WEEK06-plus](https://github.com/nansu0425/GameTechLab-WEEK06-plus) | 37건 (nansu0425 + NanSu) |
+| 2025-09-30 ~ 2025-10-02 | [GameTechLab-WEEK05-plus](https://github.com/nansu0425/GameTechLab-WEEK05-plus) | 17건 |
+
+**담당 영역**
+
+| 영역 | 키워드 |
+|------|--------|
+| **렌더링** | • Billboard/TextRender 이원 구조 재설계 |
+
+[커밋 기록 보기](commit_history.md#week05-2025-09-30--2025-10-02)
+
+---
+
+## WEEK06 — 데칼 시스템
+
+| 기간 | 리포지토리 | 커밋 |
+|------|-----------|-----|
+| 2025-10-11 ~ 2025-10-13 | [GameTechLab-WEEK06](https://github.com/nansu0425/GameTechLab-WEEK06) | 32건 |
 
 **담당 영역**
 
 | 영역 | 키워드 |
 |------|--------|
 | **데칼 시스템** | • Show Flag<br>• OBB 시각화<br>• 통계 오버레이 |
+
+[커밋 기록 보기](commit_history.md#week06-2025-10-11--2025-10-13)
+
+---
+
+## WEEK06+ — Scene Depth & Exponential Height Fog
+
+| 기간 | 리포지토리 | 커밋 |
+|------|-----------|-----|
+| 2025-10-13 ~ 2025-10-15 | [GameTechLab-WEEK06-plus](https://github.com/nansu0425/GameTechLab-WEEK06-plus) | 20건 |
+
+**담당 영역**
+
+| 영역 | 키워드 |
+|------|--------|
 | **포스트 프로세싱** | • Scene Depth 시각화<br>• Exponential Height Fog |
 | **렌더링 인프라** | • Render Target 분리<br>• Resource Hazard 해결 |
 
-[커밋 기록 보기](commit_history.md#week06-2025-10-10--2025-10-15)
+[커밋 기록 보기](commit_history.md#week06-2025-10-13--2025-10-15)
 
 ---
 
@@ -119,7 +149,7 @@
 
 | 기간 | 리포지토리 | 커밋 |
 |------|-----------|-----|
-| 2025-10-16 ~ 2025-10-22 | [GameTechLab-WEEK07](https://github.com/nansu0425/GameTechLab-WEEK07) | 127건 (nansu0425 + NanSu) |
+| 2025-10-16 ~ 2025-10-23 | [GameTechLab-WEEK07](https://github.com/nansu0425/GameTechLab-WEEK07) | 133건 |
 
 **담당 영역**
 
@@ -129,7 +159,7 @@
 | **셰이더 인프라** | • 셰이더 핫 리로드<br>• DDS 텍스처 베이킹 |
 | **렌더링 확장** | • World Normal 뷰 모드<br>• 데칼 라이팅<br>• 디버그 볼륨 |
 
-[커밋 기록 보기](commit_history.md#week07-2025-10-16--2025-10-22)
+[커밋 기록 보기](commit_history.md#week07-2025-10-16--2025-10-23)
 
 ---
 
@@ -137,7 +167,7 @@
 
 | 기간 | 리포지토리 | 커밋 |
 |------|-----------|-----|
-| 2025-10-24 ~ 2025-10-29 | [GameTechLab-WEEK08](https://github.com/nansu0425/GameTechLab-WEEK08) | 27건 (nansu0425 + NanSu) |
+| 2025-10-24 ~ 2025-10-30 | [GameTechLab-WEEK08](https://github.com/nansu0425/GameTechLab-WEEK08) | 29건 |
 
 **담당 영역**
 
@@ -147,7 +177,7 @@
 | **그림자 품질** | • PCF 소프트 섀도우<br>• PSM<br>• LiSPSM |
 | **렌더링 인프라** | • Shadow Map 리소스 관리<br>• DepthOnly 패스 |
 
-[커밋 기록 보기](commit_history.md#week08-2025-10-24--2025-10-29)
+[커밋 기록 보기](commit_history.md#week08-2025-10-24--2025-10-30)
 
 ---
 
@@ -155,7 +185,7 @@
 
 | 기간 | 리포지토리 | 커밋 |
 |------|-----------|-----|
-| 2025-10-30 ~ 2025-11-06 | [GameTechLab-WEEK09](https://github.com/nansu0425/GameTechLab-WEEK09), [GameTechLab-WEEK09-plus](https://github.com/nansu0425/GameTechLab-WEEK09-plus) | 94건 비병합 (nansu0425 + NanSu) |
+| 2025-10-31 ~ 2025-11-04 | [GameTechLab-WEEK09](https://github.com/nansu0425/GameTechLab-WEEK09) | 75건 |
 
 **담당 영역**
 
@@ -164,9 +194,24 @@
 | **스크립팅** | • Lua(Sol2) 통합<br>• 메타테이블 프록시<br>• 핫 리로딩 |
 | **충돌/이벤트** | • Shape 컴포넌트(Box/Sphere/Capsule)<br>• Overlap 이벤트 |
 | **게임플레이** | • 3종 투사체<br>• PIE 모드 객체 복제/정리 |
+
+[커밋 기록 보기](commit_history.md#week09-2025-10-31--2025-11-04)
+
+---
+
+## WEEK09+ — 카메라 시스템 / 연출
+
+| 기간 | 리포지토리 | 커밋 |
+|------|-----------|-----|
+| 2025-11-04 ~ 2025-11-06 | [GameTechLab-WEEK09-plus](https://github.com/nansu0425/GameTechLab-WEEK09-plus) | 43건 |
+
+**담당 영역**
+
+| 영역 | 키워드 |
+|------|--------|
 | **연출** | • PlayerCameraManager<br>• 카메라 쉐이크/트랜지션 |
 
-[커밋 기록 보기](commit_history.md#week09-2025-10-30--2025-11-06)
+[커밋 기록 보기](commit_history.md#week09-2025-11-04--2025-11-06)
 
 ---
 
@@ -174,7 +219,7 @@
 
 | 기간 | 리포지토리 | 커밋 |
 |------|-----------|-----|
-| 2025-11-07 ~ 2025-11-12 | [GameTechLab-WEEK10](https://github.com/nansu0425/GameTechLab-WEEK10) | 54건 (nansu0425 + NanSu) |
+| 2025-11-07 ~ 2025-11-13 | [GameTechLab-WEEK10](https://github.com/nansu0425/GameTechLab-WEEK10) | 55건 |
 
 **담당 영역**
 
@@ -185,7 +230,7 @@
 | **성능** | • FBX 바이너리 캐싱<br>• Vertex Welding |
 | **에디터** | • FBX Import 툴바<br>• Console Panel<br>• Show Flag |
 
-[커밋 기록 보기](commit_history.md#week10-2025-11-07--2025-11-12)
+[커밋 기록 보기](commit_history.md#week10-2025-11-07--2025-11-13)
 
 ---
 
@@ -193,7 +238,7 @@
 
 | 기간 | 리포지토리 | 커밋 |
 |------|-----------|-----|
-| 2025-11-13 ~ 2025-11-19 | [GameTechLab-WEEK11](https://github.com/nansu0425/GameTechLab-WEEK11) | 45건 비병합 (nansu0425 + NanSu) |
+| 2025-11-13 ~ 2025-11-20 | [GameTechLab-WEEK11](https://github.com/nansu0425/GameTechLab-WEEK11) | 66건 |
 
 **담당 영역**
 
@@ -204,7 +249,7 @@
 | **아키텍처** | • UE5 패턴 리팩토링<br>• Plugins/Fbx 모듈 분리 |
 | **에디터** | • Skeleton 교체 UI<br>• AnimToPlay 드롭다운 |
 
-[커밋 기록 보기](commit_history.md#week11-2025-11-13--2025-11-19)
+[커밋 기록 보기](commit_history.md#week11-2025-11-13--2025-11-20)
 
 ---
 
@@ -212,7 +257,7 @@
 
 | 기간 | 리포지토리 | 커밋 |
 |------|-----------|-----|
-| 2025-11-21 ~ 2025-11-26 | [GameTechLab-WEEK12](https://github.com/nansu0425/GameTechLab-WEEK12) | 45건 (nansu0425) |
+| 2025-11-21 ~ 2025-11-27 | [GameTechLab-WEEK12](https://github.com/nansu0425/GameTechLab-WEEK12) | 49건 |
 
 **담당 영역**
 
@@ -223,7 +268,7 @@
 | **엔진 인프라** | • enum UPROPERTY 리플렉션<br>• 직렬화/Template 관리 |
 | **디버깅** | • Symbol Server<br>• Source Link |
 
-[커밋 기록 보기](commit_history.md#week12-2025-11-21--2025-11-26)
+[커밋 기록 보기](commit_history.md#week12-2025-11-21--2025-11-27)
 
 ---
 
@@ -231,7 +276,7 @@
 
 | 기간 | 리포지토리 | 커밋 |
 |------|-----------|-----|
-| 2025-11-28 ~ 2025-12-04 | [GameTechLab-WEEK13](https://github.com/nansu0425/GameTechLab-WEEK13) | 105건 (nansu0425) |
+| 2025-11-28 ~ 2025-12-04 | [GameTechLab-WEEK13](https://github.com/nansu0425/GameTechLab-WEEK13) | 106건 |
 
 **담당 영역**
 
@@ -250,7 +295,7 @@
 
 | 기간 | 리포지토리 | 커밋 |
 |------|-----------|-----|
-| 2025-12-05 ~ 2025-12-11 | [GameTechLab-WEEK14](https://github.com/nansu0425/GameTechLab-WEEK14) | 37건 (nansu0425) |
+| 2025-12-05 ~ 2025-12-12 | [GameTechLab-WEEK14](https://github.com/nansu0425/GameTechLab-WEEK14) | 49건 |
 
 **담당 영역**
 
@@ -261,4 +306,4 @@
 | **렌더링** | • UberLit Alpha Test/Discard<br>• 식생 렌더링 |
 | **에셋 제작** | • GrassTile<br>• 나무<br>• 울타리<br>• Hulk Zombie |
 
-[커밋 기록 보기](commit_history.md#week14-2025-12-05--2025-12-11)
+[커밋 기록 보기](commit_history.md#week14-2025-12-05--2025-12-12)
