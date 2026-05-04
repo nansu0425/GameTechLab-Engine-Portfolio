@@ -33,4 +33,4 @@
 
 제가 담당한 작업 중 기술적으로 도전적이었던 문제의 해결 과정을 정리합니다.
 
-- **[Picking 최적화](docs/picking-optimization.md)** *(작성 중)*
+- **[Mouse Picking 최적화](docs/mouse-picking-optimization.md)** — 5만개 Static Mesh Actor가 배치된 씬에서 Mouse Picking 시간을 1,682 ms에서 0.030 ms까지(약 56,000배) 단축한 5단계 누적 최적화 과정.
