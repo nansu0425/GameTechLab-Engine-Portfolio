@@ -26,11 +26,26 @@
     - 32GB DDR5
     - Windows 11
 
-## 3. 5단계 누적 최적화
+## 3. 5단계 최적화 과정
 
-각 단계는 한 PR로 머지된 한 가지 핵심 최적화에 대응합니다. 코드 발췌는 해당 단계 PR 머지 시점의 코드입니다.
+### 3-1. Scene BVH 도입 — 5만 후보 탐색을 `O(N)`에서 `O(log N)`으로
 
-### 3-1. Scene BVH 도입 — 5만 후보를 트리로 좁히기
+최적화 전 picking은 5만 개 mesh를 선형 순회하며 ray 교차 테스트를 했습니다. 즉, 후보 탐색 시간복잡도가 `O(N)` 이었습니다. 후보 탐색 비용을 낮추고 싶었고, `O(log N)` 시간복잡도로 낮추기 위해 공간 분할(spatial partitioning) 자료구조 도입을 결정했습니다.
+
+후보로 Octree와 BVH를 검토했습니다.
+
+| 측면 | BVH | Octree |
+|------|-----|--------|
+| 분할 단위 | 객체 묶음의 AABB로 트리 구성 | 공간을 8등분(고정) |
+| 분포 적응성 | 분할 기준에 데이터 분포 반영 가능 (적응성) | 중점 기반 균등 분할 (비적응성) |
+| 동적 갱신 | Refit으로 변경된 leaf·조상만 부분 갱신 | 셀 경계 넘는 이동은 재삽입 필요 |
+
+게임 씬은 두 가지 특징이 존재합니다.
+
+1. **객체 분포가 불균일**: 어떤 씬에서 객체가 어떻게 배치될지 미리 알 수 없습니다. Octree의 8등분 고정 분할은 빈 셀과 밀집 셀이 공존하기 쉽지만, BVH는 SAH로 데이터 분포에 맞춰 분할합니다.
+2. **동적 씬**: 액터의 Transform은 실시간으로 바뀔 수 있습니다. BVH는 노드의 부모-자식 관계를 유지한 채 변경된 leaf와 그 조상의 AABB만 갱신하는 Refit이 가능한 반면, Octree는 객체가 셀 경계를 넘는 순간 재삽입이 필요합니다.
+
+이 두 가지 조건을 고려할 때 Octree보다 BVH가 적합하다고 판단했습니다.
 
 ```mermaid
 graph TD
@@ -43,12 +58,39 @@ graph TD
 ```
 
 ```cpp
-// FBVH — median split 기반 BVH (PR #12)
-void Build(const TArray<UPrimitiveComponent*>& InPrimitives);
-void QueryRay(const FRay& Ray, TArray<UPrimitiveComponent*>& OutCandidates) const;
+// Before — 5만 primitive를 모두 순회하며 ray-primitive 테스트, 최단 hit 갱신: O(N)
+for (UPrimitiveComponent* Prim : Primitives)                       // 5만 회
+{
+    if (IsRayPrimitiveCollided(Ray, Prim, &Dist) && Dist < ShortestDist)
+    {
+        ShortestPrim = Prim;
+        ShortestDist = Dist;
+    }
+}
 ```
 
-선형 5만 ray-primitive 테스트를 트리 트래버설로 바꾼 것만으로 **1,682 ms → 10 ms**, 약 158배 단축. 가장 큰 도약은 가속 구조 도입 그 자체에서 일어났습니다. ([PR #12](https://github.com/Sunha-i/GTLWeek05/pull/12) · [측정 화면](../screenshots/stage-1.png))
+```cpp
+// After — BVH 스택 트래버설: ray-AABB 가지치기로 서브트리 통째 스킵, leaf의 prim만 후보로 수집: O(log N) 기댓값
+int Stack[128]; int Sp = 0; Stack[Sp++] = 0;                       // root push
+while (Sp > 0)
+{
+    const FNode& N = Nodes[Stack[--Sp]];
+    if (!RayIntersectsAABB(Ray, N.Bounds)) continue;               // ray와 안 만나면 서브트리 전체 스킵
+    if (N.IsLeaf())
+    {
+        for (int i = 0; i < N.Count; ++i)                          // leaf의 ≤4 prim 수집
+            Candidate.push_back(Primitives[Indices[N.Start + i]]);
+    }
+    else
+    {
+        Stack[Sp++] = N.Left;                                      // 두 자식 push
+        Stack[Sp++] = N.Right;
+    }
+}
+// 좁혀진 Candidate에 대해서만 위 Before와 동일한 정밀 검사 수행
+```
+
+5만 mesh 선형 순회(`O(N)`)를 트리 순회(`O(log N)` 기댓값)로 바꾼 것만으로 **1,682 ms → 10 ms**, 약 158배 단축됐습니다. ([PR #12](https://github.com/Sunha-i/GTLWeek05/pull/12) · [측정 화면](../screenshots/stage-1.png))
 
 ### 3-2. SAH + Dirty Refit — 분할 품질과 동적 갱신
 
