@@ -16,6 +16,10 @@
 
 ## 2. 배경
 
+| 기간 | 리포지토리 | 커밋 기록 |
+|------|-----------|----------|
+| 2025-09-26 ~ 2025-09-30 | [GameTechLab-WEEK05](https://github.com/nansu0425/GameTechLab-WEEK05) | [41건](commit_history.md#week05-2025-09-26--2025-09-30) |
+
 이번 과제에서 제 담당은 `Default.scene`의 mouse picking 시간 최적화 였습니다. 제가 최적화 하기 전 mouse picking은 씬의 모든 mesh를 선형 탐색하면서 ray-triangle 테스트하는 방식이었습니다. 
 
 - **`Default.scene`** ([씬 캡처](../screenshots/default-scene.png)): 과제에서 picking 최적화 기준이 되는 씬입니다. 5만 개의 Static Mesh Actor가 배치돼 있습니다. Mesh는 `apple_mid.obj` (2,104 tri) / `bitten_apple_mid.obj` (2,014 tri) 두 종류만 존재합니다. 제약 사항이 존재했는데, Instanced Rendering을 사용하면 안되고 모든 Mesh는 Draw Call을 해야합니다.
