@@ -2,17 +2,15 @@
 
 ## 1. 성과 (한눈에)
 
-![Before — 최적화 없음](../screenshots/before-overlay.png)
-*원본 측정 화면: [stage-0.png](../screenshots/stage-0.png)*
+![Before — 최적화 없음](../screenshots/picking-time-scenebvh-before.png)
 
-![After — 모든 최적화 적용 후](../screenshots/after-overlay.png)
-*원본 측정 화면: [stage-5.png](../screenshots/stage-5.png)*
+![After — 모든 최적화 적용 후](../screenshots/picking-time-final.png)
 
-| 구분 | 최적화 전 | 최적화 후 | 단축 비율 |
+| 구분 | 최적화 전 | 최적화 후 | 빨라진 비율 |
 |:----:|:--------------------:|:---------------------:|:--------:|
-| Picking Time | **1,682 ms** | **0.030 ms** | 약 **56,000배** |
+| Picking Time (100회 평균) | **1,425.66 ms** | **0.0111 ms** | 약 **128,000배** |
 
- `Default.scene` 기준으로 **모든 최적화 적용 후** mouse picking 시간을 1,682 ms 에서 0.030 ms 까지 줄였습니다.
+`Default.scene` 기준으로 **모든 최적화 적용 후** mouse picking 시간을 1,425.66 ms 에서 0.0111 ms 까지 줄였습니다 (각 100회 평균). "최적화 후" 수치는 이번 과제에서 제가 했던 최적화가 모두 누적된 시점([`9b540ef`](https://github.com/nansu0425/GameTechLab-WEEK05/commit/9b540ef))의 측정값입니다.
 
 ## 2. 배경
 
@@ -23,7 +21,8 @@
 이번 과제에서 제 담당은 `Default.scene`의 mouse picking 시간 최적화 였습니다. 제가 최적화 하기 전 mouse picking은 씬의 모든 mesh를 선형 탐색하면서 ray-triangle 테스트하는 방식이었습니다. 
 
 - **`Default.scene`** ([씬 캡처](../screenshots/default-scene.png)): 과제에서 picking 최적화 기준이 되는 씬입니다. 5만 개의 Static Mesh Actor가 배치돼 있습니다. Mesh는 `apple_mid.obj` (2,104 tri) / `bitten_apple_mid.obj` (2,014 tri) 두 종류만 존재합니다. 제약 사항이 존재했는데, Instanced Rendering을 사용하면 안되고 모든 Mesh는 Draw Call을 해야합니다.
-- **측정 도구**: `FScopeCycleCounter`로 picking 진입~반환 구간을 감싸서 Picking 시도를 할 때마다 `FThreadStats`에 Picking 시간 및 횟수를 누적합니다. 기록된 Picking 시간은 ms 단위로 화면 좌상단에 표시됩니다. 콘솔에서 `stat picking` Command 입력 시 활성화됩니다.
+- **측정 방식**: 100회 picking 시도하고, 누적 picking 시간을 100으로 나눠 평균 picking time 을 구했습니다. 모든 측정 시점에서 동일한 `Default.scene`·동일 카메라 상태·유사한 클릭 패턴으로 측정했습니다.
+- **격리 측정**: 각 핵심 최적화의 효과를 *해당 최적화 한 가지의 효과* 로 격리하기 위해, *그 최적화를 도입한 핵심 커밋의 SHA* 에서 측정했습니다. 빨라진 비율은 *그 핵심 커밋의 직전(parent) commit 측정값* 을 분모로 계산해, 한 commit 이 가져온 효과만 정확히 보이도록 했습니다.
 - **측정 환경**: 
     - Intel Core i7-14700HX
     - NVIDIA RTX 4060 Laptop GPU
@@ -32,9 +31,9 @@
 
 ## 3. 핵심 최적화 과정
 
-이 섹션은 picking 시간 단축에 **효과가 컸던 핵심 최적화** 만 다룹니다. 본문에 등장하지 않는 micro optimization (SoA 데이터 레이아웃, BVH 빌드/갱신 품질 보강 등) 은 1번 성과의 최종 수치에는 반영되어 있지만, 이 섹션의 단계 분해에서는 생략합니다.
+이 섹션은 picking을 빠르게 만드는 데 **효과가 컸던 핵심 최적화** 만 다룹니다. micro optimization (SoA 데이터 레이아웃, BVH 빌드/갱신 품질 보강 등) 은 1번 성과의 최종 수치에는 반영되어 있지만, 이 섹션에서는 생략합니다.
 
-### 3-1. Scene BVH 도입 — 5만 candidate 탐색을 `O(N)`에서 `O(log N)`으로
+### 3-1. Scene BVH
 
 최적화 전 picking은 scene의 모든 primitive를 선형 순회하며 ray 교차 테스트를 했습니다. 즉, candidate 탐색 시간복잡도가 `O(N)` 이었습니다. candidate 탐색 비용을 낮추고 싶었고, `O(log N)` 시간복잡도로 낮추기 위해 공간 분할(spatial partitioning) 자료구조 도입을 결정했습니다.
 
@@ -94,11 +93,17 @@ while (Sp > 0)
 // 좁혀진 Candidate에 대해서만 위 Before와 동일한 정밀 검사 수행
 ```
 
-5만 `Primitives` 선형 순회(`O(N)`)를 트리 순회(`O(log N)`)로 바꾼 것만으로 **1,682 ms → 10 ms**, 약 158배 단축됐습니다. ([PR #12](https://github.com/Sunha-i/GTLWeek05/pull/12) · [측정 화면](../screenshots/stage-1.png))
+5만 `Primitives` 선형 순회(`O(N)`)를 트리 순회(`O(log N)`)로 바꾼 것만으로 약 **353× 빨라졌습니다**.
+
+#### 측정 결과 — 약 353× 빨라짐
+
+| 단계 | SHA (after) | parent SHA | Picking Time (avg, n=100) | 빨라진 비율 | 측정 화면 |
+|------|:------------:|:------------:|:------------:|:-------------:|:---------:|
+| Scene BVH 도입 | [`1233ffd`](https://github.com/nansu0425/GameTechLab-WEEK05/commit/1233ffd) | [`fbe3a5b`](https://github.com/nansu0425/GameTechLab-WEEK05/commit/fbe3a5b) (1,425.66 ms) | 4.04 ms | 약 353× | [before](../screenshots/picking-time-scenebvh-before.png) · [after](../screenshots/picking-time-scenebvh.png) |
 
 ### 3-2. 거리 기반 검사 생략
 
-3-1의 BVH가 candidate 탐색을 158× 단축한 후에는, BVH가 반환한 candidate에 대한 정밀 ray-triangle 검사가 picking 시간의 주요 병목이었습니다. 이 검사 단계에서 *모든 candidate를 검사하지 않고 가까운 candidate부터 검사하면* 큰 시간 단축이 가능할 것이라고 판단했습니다. ray와 여러 candidate가 교차한다면, picking의 경우 가까운 오브젝트를 선택해야 합니다. 따라서 가까운 candidate의 ray 교차가 확인되면 뒤에 있는 candiate의 검사는 불필요합니다. 
+3-1의 BVH가 candidate 탐색에서 약 353× 빨라진 후에는, BVH가 반환한 candidate에 대한 정밀 ray-triangle 검사가 picking 시간의 주요 병목이었습니다. 이 검사 단계에서 *모든 candidate를 검사하지 않고 가까운 candidate부터 검사하면* 더 빨라질 수 있을 것이라고 판단했습니다. ray와 여러 candidate가 교차한다면, picking의 경우 가까운 오브젝트를 선택해야 합니다. 따라서 가까운 candidate의 ray 교차가 확인되면 뒤에 있는 candiate의 검사는 불필요합니다. 
 
 #### Candidate level — TMin 정렬 + BestDist cutoff
 
@@ -175,19 +180,16 @@ while (!Stack.empty())
 3. **heap 할당 0** — Candidate level 은 `Candidate`, `CandidateTmins`, `Order` 세 배열을 heap 에 할당합니다. BVH level 은 stack (`int Stack[128]`) 만 사용.
 4. **cutoff 메커니즘 자체의 차이** — Candidate level 의 cutoff 는 *수집된 배열* 안의 `break` 로 *남은 정밀 검사* 를 종료합니다. 다만 그 candidate 들의 *수집·TMin 계산·정렬은 이미 발생한 비용* 이라 회수되지 않습니다. BVH level 의 cutoff 는 *순회 중 `continue`* 로 *서브트리 진입 자체* 를 안 합니다 — 그 서브트리의 prim 이 candidate 로 수집되지도 않습니다.
 
-#### 측정 결과 — 누적 약 185×
+#### 측정 결과 — Candidate level 도입 후 BVH level 로 대체, 최종적으로 약 45× 빨라짐
 
-| 단계 | Picking Time | 직전 단계 대비 |
-|------|:------------:|:-------------:|
-| Scene BVH only | 10 ms | — |
-| + Candidate level | 0.150 ms | 약 67× |
-| + BVH level (front-to-back) | 0.054 ms | 약 2.78× |
+| 단계 | SHA (after) | parent SHA | Picking Time (avg, n=100) | 빨라진 비율 | 측정 화면 |
+|------|:------------:|:------------:|:------------:|:-------------:|:---------:|
+| Candidate level 도입 | [`5cd01ac`](https://github.com/nansu0425/GameTechLab-WEEK05/commit/5cd01ac) | [`17a1511`](https://github.com/nansu0425/GameTechLab-WEEK05/commit/17a1511) (3.74 ms) | 0.0973 ms | 약 38× | [before](../screenshots/picking-time-candidate-cutoff-before.png) · [after](../screenshots/picking-time-candidate-cutoff.png) |
+| Candidate level → BVH level 로 대체 | [`a24a329`](https://github.com/nansu0425/GameTechLab-WEEK05/commit/a24a329) | [`5cd01ac`](https://github.com/nansu0425/GameTechLab-WEEK05/commit/5cd01ac) (0.0973 ms) | 0.0831 ms | 약 1.17× | [before](../screenshots/picking-time-candidate-cutoff.png) · [after](../screenshots/picking-time-bvh-cutoff.png) |
 
-10 ms → 0.054 ms, **약 185× 누적 단축**.
+Candidate level 도입 직전([`17a1511`](https://github.com/nansu0425/GameTechLab-WEEK05/commit/17a1511) 평균 3.74 ms) 에서 최종 BVH level 적용 후([`a24a329`](https://github.com/nansu0425/GameTechLab-WEEK05/commit/a24a329) 평균 0.0831 ms) 까지 약 **45× 빨라졌습니다**.
 
-([PR #13](https://github.com/Sunha-i/GTLWeek05/pull/13) · [PR #14](https://github.com/Sunha-i/GTLWeek05/pull/14) · [측정 화면 — Candidate level](../screenshots/stage-2.png) · [측정 화면 — BVH level](../screenshots/stage-3.png))
-
-### 3-3. Mesh BVH (2-Level)
+### 3-3. Mesh BVH
 
  Scene BVH가 정밀 판정 대상이 되는 candidate를 충분히 적은 수로 좁힐 수 있는 상태가 됐고, 더 이상 candidate를 좁히는 방식으로 최적화하긴 어려워 보였습니다. 그래서 candidate를 좁히는 방식이 아닌 정밀 판정 자체의 시간을 줄이기 위한 최적화 방법을 시도하기로 했습니다. 이 시점에선 정밀 판정 시 내부 mesh의 모든 삼각형(~2,000개)을 선형 순회하는 상태였습니다. 이건 처음 Scene BVH 적용 전 비효율적인 상황과 비슷한 상황이었습니다. 그래서 scene 단위에서 적용한 트리 순회 최적화 방식을 mesh level에도 적용하는 최적화를 시도했습니다.
 
@@ -220,16 +222,13 @@ MBVH->TraverseFrontToBack(ModelRay, CutoffT, [&](int32 TriIndex) {
 
 `Default.scene`에서 사용되는 mesh 종류는 `apple_mid.obj` / `bitten_apple_mid.obj` 두 가지뿐입니다. Mesh BVH는 `UAssetManager`가 mesh asset당 하나만 빌드한 뒤 모든 instance가 공유하므로 빌드 2회로 5만 instance를 커버합니다.
 
-Mesh level 최적화 적용 후 **0.054 ms → 0.031 ms**, 약 1.7배 picking 시간이 단축됐습니다. ([PR #15](https://github.com/Sunha-i/GTLWeek05/pull/15) · [측정 화면](../screenshots/stage-4.png))
+Mesh level 최적화 적용 후 약 **3.88× 빨라졌습니다**.
 
-### 누적 효과 종합
+#### 측정 결과 — 약 3.88× 빨라짐
 
-| 누적 최적화 | Picking Time | 직전 단계 대비 | 측정 화면 |
-|:----------|:------------:|:-------------:|:---------:|
-| (최적화 없음, 선형 탐색) | 1,682 ms | — | [stage-0](../screenshots/stage-0.png) |
-| + Scene BVH | 10 ms | **약 158×** | [stage-1](../screenshots/stage-1.png) |
-| + 거리 기반 가지치기 (candidate + BVH level) | 0.054 ms | **약 185×** | [stage-3](../screenshots/stage-3.png) |
-| + Mesh BVH | 0.031 ms | 약 1.7× | [stage-4](../screenshots/stage-4.png) |
+| 단계 | SHA (after) | parent SHA | Picking Time (avg, n=100) | 빨라진 비율 | 측정 화면 |
+|------|:------------:|:------------:|:------------:|:-------------:|:---------:|
+| Mesh BVH 도입 | [`cc8fe27`](https://github.com/nansu0425/GameTechLab-WEEK05/commit/cc8fe27) | [`919c3ed`](https://github.com/nansu0425/GameTechLab-WEEK05/commit/919c3ed) (0.0777 ms) | 0.0200 ms | 약 3.88× | [before](../screenshots/picking-time-mesh-bvh-before.png) · [after](../screenshots/picking-time-mesh-bvh.png) |
 
 ## 4. 선택의 근거와 트레이드오프
 
