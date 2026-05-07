@@ -1,14 +1,10 @@
 # Mouse Picking 최적화
 
-## 1. 성과 (한눈에)
+## 1. 성과
 
-![Before — 최적화 없음](../screenshots/picking-time-scenebvh-before.png)
-
-![After — 모든 최적화 적용 후](../screenshots/picking-time-final.png)
-
-| 구분 | 최적화 전 | 최적화 후 | 빨라진 비율 |
-|:----:|:--------------------:|:---------------------:|:--------:|
-| Picking Time (100회 평균) | **1,425.66 ms** | **0.0111 ms** | 약 **128,000배** |
+| 구분 | 최적화 전 | 최적화 후 | 빨라진 비율 | 측정 화면 |
+|:----:|:--------------------:|:---------------------:|:--------:|:---------:|
+| Picking Time (100회 평균) | **1,425.66 ms** | **0.0111 ms** | 약 **128,000배** | [before](../screenshots/picking-time-scenebvh-before.png) · [after](../screenshots/picking-time-final.png) |
 
 `Default.scene` 기준으로 **모든 최적화 적용 후** mouse picking 시간을 1,425.66 ms 에서 0.0111 ms 까지 줄였습니다 (각 100회 평균). "최적화 후" 수치는 이번 과제에서 제가 했던 최적화가 모두 누적된 시점([`9b540ef`](https://github.com/nansu0425/GameTechLab-WEEK05/commit/9b540ef))의 측정값입니다.
 
