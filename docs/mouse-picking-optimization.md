@@ -2,9 +2,11 @@
 
 ## 1. 성과
 
-| 구분 | 최적화 전 | 최적화 후 | 빨라진 비율 | 측정 화면 |
-|:----:|:--------------------:|:---------------------:|:--------:|:---------:|
-| Picking Time (100회 평균) | **1,425.66 ms** | **0.0111 ms** | 약 **128,000배** | [before](../screenshots/picking-time-scenebvh-before.png) · [after](../screenshots/picking-time-final.png) |
+![Mouse Picking Time — 최적화 전(1,425.66 ms) vs 후(0.0111 ms), 약 128,000× 빨라짐](../screenshots/charts/chart-overall.png)
+
+| 구분 | 측정 화면 |
+|:----:|:---------:|
+| Picking Time (100회 평균) | [before](../screenshots/picking-time-scenebvh-before.png) · [after](../screenshots/picking-time-final.png) |
 
 `Default.scene` 기준으로 **모든 최적화 적용 후** mouse picking 시간을 1,425.66 ms 에서 0.0111 ms 까지 줄였습니다 (각 100회 평균). "최적화 후" 수치는 이번 과제에서 제가 했던 최적화가 모두 누적된 시점([`9b540ef`](https://github.com/nansu0425/GameTechLab-WEEK05/commit/9b540ef))의 측정값입니다.
 
@@ -27,7 +29,9 @@
 
 ## 3. 핵심 최적화 과정
 
-이 섹션은 picking을 빠르게 만드는 데 **효과가 컸던 핵심 최적화** 만 다룹니다. micro optimization (SoA 데이터 레이아웃, BVH 빌드/갱신 품질 보강 등) 은 1번 성과의 최종 수치에는 반영되어 있지만, 이 섹션에서는 생략합니다.
+이 섹션은 picking을 빠르게 만드는 데 **효과가 컸던 핵심 최적화** 만 다룹니다. micro optimization (SoA 데이터 레이아웃, BVH 빌드/갱신 품질 보강 등) 은 최종 수치에는 반영되어 있지만, 이 섹션에서 설명을 생략합니다.
+
+![핵심 최적화 단계별 누적 picking time — 1,425.66 ms → 0.0111 ms (약 128,000× 빨라짐)](../screenshots/charts/chart-cumulative.png)
 
 ### 3-1. Scene BVH
 
@@ -93,15 +97,17 @@ while (Sp > 0)
 
 #### 측정 결과 — 약 353× 빨라짐
 
-| 단계 | SHA (after) | parent SHA | Picking Time (avg, n=100) | 빨라진 비율 | 측정 화면 |
-|------|:------------:|:------------:|:------------:|:-------------:|:---------:|
-| Scene BVH 도입 | [`1233ffd`](https://github.com/nansu0425/GameTechLab-WEEK05/commit/1233ffd) | [`fbe3a5b`](https://github.com/nansu0425/GameTechLab-WEEK05/commit/fbe3a5b) (1,425.66 ms) | 4.04 ms | 약 353× | [before](../screenshots/picking-time-scenebvh-before.png) · [after](../screenshots/picking-time-scenebvh.png) |
+![Scene BVH — 적용 전(1,425.66 ms) vs 적용 후(4.04 ms), 약 353× 빨라짐](../screenshots/charts/chart-scene-bvh.png)
+
+| 단계 | SHA (after) | parent SHA | 측정 화면 |
+|------|:------------:|:------------:|:---------:|
+| Scene BVH 도입 | [`1233ffd`](https://github.com/nansu0425/GameTechLab-WEEK05/commit/1233ffd) | [`fbe3a5b`](https://github.com/nansu0425/GameTechLab-WEEK05/commit/fbe3a5b) | [before](../screenshots/picking-time-scenebvh-before.png) · [after](../screenshots/picking-time-scenebvh.png) |
 
 ### 3-2. 거리 기반 검사 생략
 
 3-1의 BVH가 candidate 탐색에서 약 353× 빨라진 후에는, BVH가 반환한 candidate에 대한 정밀 ray-triangle 검사가 picking 시간의 주요 병목이었습니다. 이 검사 단계에서 *모든 candidate를 검사하지 않고 가까운 candidate부터 검사하면* 더 빨라질 수 있을 것이라고 판단했습니다. ray와 여러 candidate가 교차한다면, picking의 경우 가까운 오브젝트를 선택해야 합니다. 따라서 가까운 candidate의 ray 교차가 확인되면 뒤에 있는 candiate의 검사는 불필요합니다. 
 
-#### Candidate level — TMin 정렬 + BestDist cutoff
+#### Primitive cutoff — TMin 정렬 + BestDist 비교
 
 BVH가 반환한 candidate의 ray-AABB TMin (ray가 AABB에 진입하는 거리) 을 계산하고, TMin 오름차순으로 정렬해 가까운 candidate부터 정밀 검사합니다. 검사 도중 hit 거리(`BestDist`)가 갱신되면 *그보다 먼 위치의 candidate가 발견되는 즉시 검사를 종료* 합니다.
 
@@ -114,17 +120,17 @@ for (int64 Idx : Order)
 }
 ```
 
-#### Candidate level 의 한계 — 더 일찍 생략할 여지
+#### Primitive cutoff 의 한계 — 더 일찍 생략할 여지
 
-Candidate level 은 BVH 가 반환한 candidate 를 *받은 후에* 검사 생략을 적용합니다. 이 구조를 풀어서 설명하면 아래와 같습니다.
+Primitive cutoff 는 BVH 가 반환한 candidate 를 *받은 후에* 검사 생략을 적용합니다. 이 구조를 풀어서 설명하면 아래와 같습니다.
 
 - BVH 트리 순회에서 ray 와 교차하는 *모든* leaf 의 prim 을 일단 candidate 배열에 다 모읍니다.
 - 모든 candidate 의 TMin 을 계산하고 `std::sort` 로 정렬합니다.
 - 검사 루프 안의 cutoff 가 일찍 break 시켜도, *수집·정렬에 든 비용* 은 이미 발생한 뒤입니다.
 
-거리 기반 생략을 *BVH 트리 순회 과정* 안으로 옮겨서 ray 와 교차하는 서브트리 및 leaf 단위로 검사 생략을 적용한다면 candidate 수집·정렬 비용을 제거할 수 있습니다. 이 판단을 근거로 BVH level 거리 기반 생략 방식으로 발전시켰습니다.
+거리 기반 생략을 *BVH 트리 순회 과정* 안으로 옮겨서 ray 와 교차하는 서브트리 및 leaf 단위로 검사 생략을 적용한다면 candidate 수집·정렬 비용을 제거할 수 있습니다. 이 판단을 근거로 Node cutoff 방식으로 발전시켰습니다.
 
-#### BVH level 로 대체 — front-to-back 순회 + 노드 cutoff
+#### Node cutoff 로 대체 — front-to-back 순회 + 서브트리 스킵
 
 Candidate 배열을 만들기 *전에* BVH 트리 순회 자체에서 거리 기반 생략을 수행합니다. 두 자식 노드 모두 ray 와 교차할 때 가까운 자식이 먼저 pop 되도록 stack에 push 합니다. hit 갱신 후 *현재 `BestDist` 보다 먼 노드는 방문 생략* 합니다.
 
@@ -138,7 +144,7 @@ graph TD
 ```
 
 ```cpp
-// BVH level 핵심 — 노드 스택에 (Index, TMin) 쌍을 저장. 가까운 자식 우선 방문 + 노드 단위 cutoff
+// Node cutoff 핵심 — 노드 스택에 (Index, TMin) 쌍을 저장. 가까운 자식 우선 방문 + 서브트리 스킵
 struct FEntry { int64 Index; float TMin; };
 Stack.push_back({ root, RootTMin });
 
@@ -169,21 +175,23 @@ while (!Stack.empty())
 }
 ```
 
-#### BVH level 이 더 빠른 4가지 이유
+#### Node cutoff 가 더 빠른 4가지 이유
 
-1. **불필요한 leaf 방문 자체가 사라짐** — Candidate level 은 ray 와 BVH 가 교차하는 *모든* leaf 의 prim 을 일단 다 수집합니다. BVH level 은 가까운 leaf 에서 hit 발견 시 *먼 leaf 는 아예 방문 안 함*.
-2. **candidate 수집·정렬 오버헤드 제거** — Candidate level 의 TMin 계산 (모든 candidate) 과 `std::sort` 가 통째로 사라집니다.
-3. **heap 할당 0** — Candidate level 은 `Candidate`, `CandidateTmins`, `Order` 세 배열을 heap 에 할당합니다. BVH level 은 stack (`int Stack[128]`) 만 사용.
-4. **cutoff 메커니즘 자체의 차이** — Candidate level 의 cutoff 는 *수집된 배열* 안의 `break` 로 *남은 정밀 검사* 를 종료합니다. 다만 그 candidate 들의 *수집·TMin 계산·정렬은 이미 발생한 비용* 이라 회수되지 않습니다. BVH level 의 cutoff 는 *순회 중 `continue`* 로 *서브트리 진입 자체* 를 안 합니다 — 그 서브트리의 prim 이 candidate 로 수집되지도 않습니다.
+1. **불필요한 leaf 방문 자체가 사라짐** — Primitive cutoff 는 ray 와 BVH 가 교차하는 *모든* leaf 의 prim 을 일단 다 수집합니다. Node cutoff 는 가까운 leaf 에서 hit 발견 시 *먼 leaf 는 아예 방문 안 함*.
+2. **candidate 수집·정렬 오버헤드 제거** — Primitive cutoff 의 TMin 계산 (모든 candidate) 과 `std::sort` 가 통째로 사라집니다.
+3. **heap 할당 0** — Primitive cutoff 는 `Candidate`, `CandidateTmins`, `Order` 세 배열을 heap 에 할당합니다. Node cutoff 는 stack (`int Stack[128]`) 만 사용.
+4. **cutoff 메커니즘 자체의 차이** — Primitive cutoff 는 *수집된 배열* 안의 `break` 로 *남은 정밀 검사* 를 종료합니다. 다만 그 candidate 들의 *수집·TMin 계산·정렬은 이미 발생한 비용* 이라 회수되지 않습니다. Node cutoff 는 *순회 중 `continue`* 로 *서브트리 진입 자체* 를 안 합니다 — 그 서브트리의 prim 이 candidate 로 수집되지도 않습니다.
 
-#### 측정 결과 — Candidate level 도입 후 BVH level 로 대체, 최종적으로 약 45× 빨라짐
+#### 측정 결과 — Primitive cutoff 도입 후 Node cutoff 로 대체, 최종적으로 약 45× 빨라짐
 
-| 단계 | SHA (after) | parent SHA | Picking Time (avg, n=100) | 빨라진 비율 | 측정 화면 |
-|------|:------------:|:------------:|:------------:|:-------------:|:---------:|
-| Candidate level 도입 | [`5cd01ac`](https://github.com/nansu0425/GameTechLab-WEEK05/commit/5cd01ac) | [`17a1511`](https://github.com/nansu0425/GameTechLab-WEEK05/commit/17a1511) (3.74 ms) | 0.0973 ms | 약 38× | [before](../screenshots/picking-time-candidate-cutoff-before.png) · [after](../screenshots/picking-time-candidate-cutoff.png) |
-| Candidate level → BVH level 로 대체 | [`a24a329`](https://github.com/nansu0425/GameTechLab-WEEK05/commit/a24a329) | [`5cd01ac`](https://github.com/nansu0425/GameTechLab-WEEK05/commit/5cd01ac) (0.0973 ms) | 0.0831 ms | 약 1.17× | [before](../screenshots/picking-time-candidate-cutoff.png) · [after](../screenshots/picking-time-bvh-cutoff.png) |
+![거리 기반 검사 생략 — 적용 전(3.74 ms) → Primitive cutoff(0.0973 ms) → Node cutoff(0.0831 ms), 최종 약 45× 빨라짐](../screenshots/charts/chart-distance-cutoff.png)
 
-Candidate level 도입 직전([`17a1511`](https://github.com/nansu0425/GameTechLab-WEEK05/commit/17a1511) 평균 3.74 ms) 에서 최종 BVH level 적용 후([`a24a329`](https://github.com/nansu0425/GameTechLab-WEEK05/commit/a24a329) 평균 0.0831 ms) 까지 약 **45× 빨라졌습니다**.
+| 단계 | SHA (after) | parent SHA | 측정 화면 |
+|------|:------------:|:------------:|:---------:|
+| Primitive cutoff 도입 | [`5cd01ac`](https://github.com/nansu0425/GameTechLab-WEEK05/commit/5cd01ac) | [`17a1511`](https://github.com/nansu0425/GameTechLab-WEEK05/commit/17a1511) | [before](../screenshots/picking-time-candidate-cutoff-before.png) · [after](../screenshots/picking-time-candidate-cutoff.png) |
+| Primitive cutoff → Node cutoff 로 대체 | [`a24a329`](https://github.com/nansu0425/GameTechLab-WEEK05/commit/a24a329) | [`5cd01ac`](https://github.com/nansu0425/GameTechLab-WEEK05/commit/5cd01ac) | [before](../screenshots/picking-time-candidate-cutoff.png) · [after](../screenshots/picking-time-bvh-cutoff.png) |
+
+Primitive cutoff 도입 직전([`17a1511`](https://github.com/nansu0425/GameTechLab-WEEK05/commit/17a1511) 평균 3.74 ms) 에서 최종 Node cutoff 적용 후([`a24a329`](https://github.com/nansu0425/GameTechLab-WEEK05/commit/a24a329) 평균 0.0831 ms) 까지 약 **45× 빨라졌습니다**.
 
 ### 3-3. Mesh BVH
 
@@ -222,9 +230,11 @@ Mesh level 최적화 적용 후 약 **3.88× 빨라졌습니다**.
 
 #### 측정 결과 — 약 3.88× 빨라짐
 
-| 단계 | SHA (after) | parent SHA | Picking Time (avg, n=100) | 빨라진 비율 | 측정 화면 |
-|------|:------------:|:------------:|:------------:|:-------------:|:---------:|
-| Mesh BVH 도입 | [`cc8fe27`](https://github.com/nansu0425/GameTechLab-WEEK05/commit/cc8fe27) | [`919c3ed`](https://github.com/nansu0425/GameTechLab-WEEK05/commit/919c3ed) (0.0777 ms) | 0.0200 ms | 약 3.88× | [before](../screenshots/picking-time-mesh-bvh-before.png) · [after](../screenshots/picking-time-mesh-bvh.png) |
+![Mesh BVH — 적용 전(0.0777 ms) vs 적용 후(0.0200 ms), 약 3.88× 빨라짐](../screenshots/charts/chart-mesh-bvh.png)
+
+| 단계 | SHA (after) | parent SHA | 측정 화면 |
+|------|:------------:|:------------:|:---------:|
+| Mesh BVH 도입 | [`cc8fe27`](https://github.com/nansu0425/GameTechLab-WEEK05/commit/cc8fe27) | [`919c3ed`](https://github.com/nansu0425/GameTechLab-WEEK05/commit/919c3ed) | [before](../screenshots/picking-time-mesh-bvh-before.png) · [after](../screenshots/picking-time-mesh-bvh.png) |
 
 ## 4. 회고
 
